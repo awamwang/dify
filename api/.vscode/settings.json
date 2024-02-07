@@ -1,0 +1,11 @@
+{
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "ms-python.autopep8",
+    "editor.autoIndent": "keep"
+  },
+  "autopep8.args": [
+    "--max-line-length=150"
+  ],
+  "files.trimTrailingWhitespace": false
+}

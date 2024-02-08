@@ -18,6 +18,7 @@ from google.generativeai.types.content_types import to_part
 
 logger = logging.getLogger(__name__)
 
+
 class GoogleLargeLanguageModel(LargeLanguageModel):
 
     def _invoke(self, model: str, credentials: dict,
@@ -55,7 +56,7 @@ class GoogleLargeLanguageModel(LargeLanguageModel):
         prompt = self._convert_messages_to_prompt(prompt_messages)
 
         return self._get_num_tokens_by_gpt2(prompt)
-    
+
     def _convert_messages_to_prompt(self, messages: list[PromptMessage]) -> str:
         """
         Format a list of messages into a full prompt for the Google model
@@ -80,14 +81,13 @@ class GoogleLargeLanguageModel(LargeLanguageModel):
         :param credentials: model credentials
         :return:
         """
-        
+
         try:
             ping_message = PromptMessage(content="ping", role="system")
             self._generate(model, credentials, [ping_message], {"max_tokens_to_sample": 5})
-            
+
         except Exception as ex:
             raise CredentialsValidateFailedError(str(ex))
-            
 
     def _generate(self, model: str, credentials: dict,
                   prompt_messages: list[PromptMessage], model_parameters: dict,
@@ -130,7 +130,6 @@ class GoogleLargeLanguageModel(LargeLanguageModel):
                 else:
                     history.append(content)
 
-
         # Create a new ClientManager with tenant's API key
         new_client_manager = client._ClientManager()
         new_client_manager.configure(api_key=credentials["google_api_key"])
@@ -138,13 +137,13 @@ class GoogleLargeLanguageModel(LargeLanguageModel):
 
         google_model._client = new_custom_client
 
-        safety_settings={
+        safety_settings = {
             HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
             HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
             HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
             HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
         }
-        
+
         response = google_model.generate_content(
             contents=history,
             generation_config=genai.types.GenerationConfig(
@@ -207,13 +206,13 @@ class GoogleLargeLanguageModel(LargeLanguageModel):
         for chunk in response:
             content = chunk.text
             index += 1
-           
+
             assistant_prompt_message = AssistantPromptMessage(
                 content=content if content else '',
             )
-  
+
             if not response._done:
-                
+
                 # transform assistant message to prompt message
                 yield LLMResultChunk(
                     model=model,
@@ -224,14 +223,14 @@ class GoogleLargeLanguageModel(LargeLanguageModel):
                     )
                 )
             else:
-                
+
                 # calculate num tokens
                 prompt_tokens = self.get_num_tokens(model, credentials, prompt_messages)
                 completion_tokens = self.get_num_tokens(model, credentials, [assistant_prompt_message])
 
                 # transform usage
                 usage = self._calc_response_usage(model, credentials, prompt_tokens, completion_tokens)
-                
+
                 yield LLMResultChunk(
                     model=model,
                     prompt_messages=prompt_messages,
@@ -288,16 +287,16 @@ class GoogleLargeLanguageModel(LargeLanguageModel):
                 else:
                     metadata, data = c.data.split(',', 1)
                     mime_type = metadata.split(';', 1)[0].split(':')[1]
-                    blob = {"inline_data":{"mime_type":mime_type,"data":data}}
+                    blob = {"inline_data": {"mime_type": mime_type, "data": data}}
                     parts.append(blob)
 
         glm_content = {
             "role": "user" if message.role in (PromptMessageRole.USER, PromptMessageRole.SYSTEM) else "model",
             "parts": parts
         }
-        
+
         return glm_content
-    
+
     @property
     def _invoke_error_mapping(self) -> dict[type[InvokeError], list[type[Exception]]]:
         """

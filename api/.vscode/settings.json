@@ -5,7 +5,8 @@
     "editor.autoIndent": "keep"
   },
   "autopep8.args": [
-    "--max-line-length=150"
+    "--ignore=W293",
+    "--max-line-length=200",
   ],
   "files.trimTrailingWhitespace": false
 }

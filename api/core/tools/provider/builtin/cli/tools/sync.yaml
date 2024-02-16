@@ -1,0 +1,28 @@
+identity:
+  name: cli_sync
+  author: Dify
+  label:
+    en_US: Sync Cli
+    zh_Hans: 同步执行
+    pt_BR: Gráfico linear
+  icon: icon.svg
+description:
+  human:
+    en_US: sync cli
+    zh_Hans: 同步执行
+    pt_BR: Gráfico linear
+  llm: A tool that synchronizes the execution of a command line and returns the result
+parameters:
+  - name: command
+    type: string
+    required: true
+    label:
+      en_US: command
+      zh_Hans: 命令
+      pt_BR: dados
+    human_description:
+      en_US: command for generating linear cli
+      zh_Hans: 用于同步执行命令行
+      pt_BR: dados para gerar gráfico linear
+    llm_description: the command for cli tool, command should be a string
+    form: llm

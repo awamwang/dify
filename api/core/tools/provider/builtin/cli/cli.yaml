@@ -1,0 +1,13 @@
+identity:
+  author: Dify
+  name: cli
+  label:
+    en_US: CliGenerator
+    zh_Hans: 调用命令行
+    pt_BR: Gerador de gráficos
+  description:
+    en_US: Cli Generator is a tool for generating statistical charts like bar cli, line cli, pie cli, etc.
+    zh_Hans: 命令行工具是一工具，它可以调用 Windows Linux mac 命令行
+    pt_BR: O Gerador de gráficos é uma ferramenta para gerar gráficos estatísticos como gráfico de barras, gráfico de linhas, gráfico de pizza, etc.
+  icon: icon.png
+credentials_for_provider:

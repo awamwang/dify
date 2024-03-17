@@ -145,6 +145,7 @@ docker/volumes/db/data/*
 docker/volumes/redis/data/*
 docker/volumes/weaviate/*
 docker/volumes/qdrant/*
+docker/volumes/*
 
 sdks/python-client/build
 sdks/python-client/dist
@@ -152,3 +153,6 @@ sdks/python-client/dify_client.egg-info
 
 .vscode/*
 !.vscode/launch.json
+
+/docker/docker-compose.override.yaml
+/docker/docker-compose.middleware.override.yaml

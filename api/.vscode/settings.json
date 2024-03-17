@@ -2,7 +2,8 @@
   "[python]": {
     "editor.tabSize": 4,
     "editor.defaultFormatter": "ms-python.autopep8",
-    "editor.autoIndent": "keep"
+    "editor.autoIndent": "keep",
+    "editor.formatOnType": false
   },
   "autopep8.args": [
     "--ignore=W293",

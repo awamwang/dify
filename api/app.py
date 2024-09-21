@@ -15,7 +15,6 @@ if not os.environ.get("DEBUG") or os.environ.get("DEBUG").lower() != 'true':
 import json
 import logging
 import threading
-import time
 import warnings
 
 from flask import Flask, Response, request
@@ -48,12 +47,12 @@ from services.account_service import AccountService
 warnings.simplefilter("ignore", ResourceWarning)
 
 # fix windows platform
-if os.name == "nt":
-    os.system('tzutil /s "UTC"')    
-else:
-    os.environ['TZ'] = 'UTC'
-    time.tzset()
-
+# if os.name == "nt":
+#     print("fix windows platform" + os.name + os.environ['TZ'])
+#     os.system('tzutil /s "UTC"')
+# else:
+#     os.environ['TZ'] = 'UTC'
+#     time.tzset()
 
 class DifyApp(Flask):
     pass

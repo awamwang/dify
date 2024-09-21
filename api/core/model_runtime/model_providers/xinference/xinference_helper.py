@@ -6,6 +6,8 @@ from requests.adapters import HTTPAdapter
 from requests.exceptions import ConnectionError, MissingSchema, Timeout
 from requests.sessions import Session
 
+from libs.request import log_response
+
 
 class XinferenceModelExtraParameter:
     model_format: str
@@ -63,7 +65,7 @@ class XinferenceHelper:
         session.mount('https://', HTTPAdapter(max_retries=3))
 
         try:
-            response = session.get(url, timeout=10)
+            response = session.get(url, timeout=10, hooks={'response': log_response})
         except (MissingSchema, ConnectionError, Timeout) as e:
             raise RuntimeError(f'get xinference model extra parameter failed, url: {url}, error: {e}')
 

@@ -145,7 +145,9 @@ docker/volumes/db/data/*
 docker/volumes/redis/data/*
 docker/volumes/weaviate/*
 docker/volumes/qdrant/*
-docker/volumes/*
+docker/volumes/etcd/*
+docker/volumes/minio/*
+docker/volumes/milvus/*
 
 sdks/python-client/build
 sdks/python-client/dist
@@ -156,3 +158,4 @@ sdks/python-client/dify_client.egg-info
 
 /docker/docker-compose.override.yaml
 /docker/docker-compose.middleware.override.yaml
+pyrightconfig.json

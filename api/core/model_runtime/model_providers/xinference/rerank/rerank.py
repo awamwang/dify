@@ -44,6 +44,9 @@ class XinferenceRerankModel(RerankModel):
                 docs=[]
             )
 
+        if credentials['server_url'].endswith('/'):
+            credentials['server_url'] = credentials['server_url'][:-1]
+
         # initialize client
         client = Client(
             base_url=credentials['server_url']
@@ -92,6 +95,9 @@ class XinferenceRerankModel(RerankModel):
         :return:
         """
         try:
+            if "/" in credentials['model_uid'] or "?" in credentials['model_uid'] or "#" in credentials['model_uid']:
+                raise CredentialsValidateFailedError("model_uid should not contain /, ?, or #")
+            
             self.invoke(
                 model=model,
                 credentials=credentials,

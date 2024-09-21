@@ -28,13 +28,14 @@ from core.entities.application_entities import (
     ModelConfigEntity,
     PromptTemplateEntity,
     SensitiveWordAvoidanceEntity,
+    TextToSpeechEntity,
 )
 from core.entities.model_entities import ModelStatus
 from core.errors.error import ModelCurrentlyNotSupportError, ProviderTokenNotInitError, QuotaExceededError
 from core.file.file_obj import FileObj
 from core.model_runtime.entities.message_entities import PromptMessageRole
 from core.model_runtime.entities.model_entities import ModelType
-from core.model_runtime.errors.invoke import InvokeAuthorizationError, InvokeError
+from core.model_runtime.errors.invoke import InvokeAuthorizationError
 from core.model_runtime.model_providers.__base.large_language_model import LargeLanguageModel
 from core.prompt.prompt_template import PromptTemplateParser
 from core.provider_manager import ProviderManager
@@ -194,13 +195,11 @@ class ApplicationManager:
             except ValidationError as e:
                 logger.exception("Validation Error when generating")
                 queue_manager.publish_error(e, PublishFrom.APPLICATION_MANAGER)
-            except (ValueError, InvokeError) as e:
-                queue_manager.publish_error(e, PublishFrom.APPLICATION_MANAGER)
             except Exception as e:
                 logger.exception("Unknown Error when generating")
                 queue_manager.publish_error(e, PublishFrom.APPLICATION_MANAGER)
             finally:
-                db.session.remove()
+                db.session.close()
 
     def _handle_response(self, application_generate_entity: ApplicationGenerateEntity,
                          queue_manager: ApplicationQueueManager,
@@ -232,8 +231,6 @@ class ApplicationManager:
             else:
                 logger.exception(e)
                 raise e
-        finally:
-            db.session.remove()
 
     def _convert_from_app_model_config_dict(self, tenant_id: str, app_model_config_dict: dict) \
             -> AppOrchestrationConfigEntity:
@@ -572,7 +569,11 @@ class ApplicationManager:
         text_to_speech_dict = copy_app_model_config_dict.get('text_to_speech')
         if text_to_speech_dict:
             if 'enabled' in text_to_speech_dict and text_to_speech_dict['enabled']:
-                properties['text_to_speech'] = True
+                properties['text_to_speech'] = TextToSpeechEntity(
+                    enabled=text_to_speech_dict.get('enabled'),
+                    voice=text_to_speech_dict.get('voice'),
+                    language=text_to_speech_dict.get('language'),
+                )
 
         # sensitive word avoidance
         sensitive_word_avoidance_dict = copy_app_model_config_dict.get('sensitive_word_avoidance')
@@ -646,6 +647,7 @@ class ApplicationManager:
 
             db.session.add(conversation)
             db.session.commit()
+            db.session.refresh(conversation)
         else:
             conversation = (
                 db.session.query(Conversation)
@@ -684,6 +686,7 @@ class ApplicationManager:
 
         db.session.add(message)
         db.session.commit()
+        db.session.refresh(message)
 
         for file in application_generate_entity.files:
             message_file = MessageFile(

@@ -97,6 +97,9 @@ class XinferenceAILargeLanguageModel(LargeLanguageModel):
             }
         """
         try:
+            if "/" in credentials['model_uid'] or "?" in credentials['model_uid'] or "#" in credentials['model_uid']:
+                raise CredentialsValidateFailedError("model_uid should not contain /, ?, or #")
+            
             extra_param = XinferenceHelper.get_xinference_extra_parameter(
                 server_url=credentials['server_url'],
                 model_uid=credentials['model_uid']
@@ -305,6 +308,7 @@ class XinferenceAILargeLanguageModel(LargeLanguageModel):
                 type=ParameterType.INT,
                 use_template='max_tokens',
                 min=1,
+                max=credentials.get('context_length', 2048),
                 default=512,
                 label=I18nObject(
                     zh_Hans='最大生成长度',
